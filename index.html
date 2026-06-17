@@ -24,7 +24,16 @@
     overflow:hidden;
   }
   /* confetti dots */
-  .dot { position:absolute; border-radius:2px; opacity:0.85; }
+  .dot {
+    position:absolute; top:-12vh; border-radius:2px;
+    will-change:transform;
+    animation-name:fall; animation-timing-function:linear;
+    animation-iteration-count:infinite;
+  }
+  @keyframes fall {
+    0%   { transform:translateY(0) translateX(0) rotate(0deg); }
+    100% { transform:translateY(115vh) translateX(var(--drift)) rotate(var(--spin)); }
+  }
   .left {
     display:flex; flex-direction:column; justify-content:center;
     padding: 5vh 4vw 5vh 5vw; position:relative; z-index:2;
@@ -125,19 +134,23 @@
 </div>
 
 <script>
-  // lightweight confetti
+  // falling confetti
   const stage = document.getElementById('stage');
   const colors = ['#e0712f','#f5853f','#5b9bd5','#ffffff','#ffcf9e'];
-  for (let i=0;i<70;i++){
+  for (let i=0;i<90;i++){
     const d = document.createElement('div');
     d.className='dot';
     const s = 6 + Math.random()*10;
     d.style.width=s+'px'; d.style.height=(s*0.4)+'px';
     d.style.background=colors[Math.floor(Math.random()*colors.length)];
     d.style.left=(Math.random()*100)+'vw';
-    d.style.top=(Math.random()*100)+'vh';
-    d.style.transform='rotate('+(Math.random()*360)+'deg)';
-    d.style.opacity=0.25+Math.random()*0.55;
+    d.style.opacity=(0.35+Math.random()*0.5).toFixed(2);
+    // sideways drift and spin per piece
+    d.style.setProperty('--drift', (Math.random()*16-8)+'vw');
+    d.style.setProperty('--spin', (Math.random()*720-360)+'deg');
+    const dur = 5 + Math.random()*5;          // 5s to 10s fall
+    d.style.animationDuration = dur+'s';
+    d.style.animationDelay = (-Math.random()*dur)+'s';  // negative = screen full at load
     stage.appendChild(d);
   }
 </script>
